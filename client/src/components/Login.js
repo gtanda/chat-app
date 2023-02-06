@@ -2,13 +2,14 @@ import {Button, Flex, FormControl, FormLabel, Heading, Input, Text, FormErrorMes
 import {useDispatch} from "react-redux";
 import {changeView} from "../features/indexView/indexView";
 import {useRef, useState} from "react";
+import {redirect, useNavigate} from "react-router-dom";
 import authService from "../services/auth";
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [isError, setIsError] = useState(false);
-    const dispatch = useDispatch();
+    const [isError, setIsError] = useState(false);    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const timerId = useRef(null);
 
     const handleLogin = async (e) => {
@@ -23,8 +24,9 @@ const Login = () => {
             return;
         }
 
-        const loginUser = await authService.login({username, password});
-        console.log('loginUser', loginUser);
+        await authService.login({username, password})
+            .catch(err => console.log('login err', err));
+        navigate('/home', {replace: true});
     }
 
 
@@ -40,7 +42,8 @@ const Login = () => {
                     <Button onClick={handleLogin} colorScheme={"teal"} mb={3}>Login</Button>
                     <Text _hover={{cursor: "pointer"}} onClick={() => dispatch(changeView())} color={"blue.500"}>Not a
                         User? <strong>Register</strong></Text>
-                    {isError ? <FormErrorMessage><strong>Valid Username and Password required.</strong></FormErrorMessage>: null}
+                    {isError ? <FormErrorMessage><strong>Valid Username and Password
+                        required.</strong></FormErrorMessage> : null}
                 </FormControl>
             </Flex>
         </Flex>);
