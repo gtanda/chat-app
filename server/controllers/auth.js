@@ -9,13 +9,19 @@ authRouter.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const userExists = await supabase.from('users').select().match({username});
+    if (userExists.data && userExists.data.length > 0) {
+        return res.status(400).json({error: 'Username already registered'});
+    }
+
     const {data, error} = await supabase.from('users').insert({username, password: hashedPassword}).select();
     console.log('error', error);
     if (error) {
         return res.status(400).json({error: error.message});
     }
+    console.log(data);
 
-    return res.status(200).json({message: 'User created'});
+    return res.status(200).json({message: 'User created', data: data[2]});
 });
 
 authRouter.post('/login', async (req, res) => {
@@ -25,19 +31,21 @@ authRouter.post('/login', async (req, res) => {
         return res.status(400).json({error: 'Missing fields'});
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const isSamePassword = await bcrypt.compare(password, hashedPassword);
-    if (isSamePassword) {
-        const {data, error} = await supabase.from('users').select().match({username});
-        if (error) {
-            return res.status(400).json({error: error.message});
-        }
-        if (data && data.length === 0) {
-            return res.status(400).json({error: 'Invalid credentials'});
-        }
-    return res.status(200).json({message: 'User logged in', data: data[2]});
+    const {data, error} = await supabase.from('users').select().match({username});
+    if (error) {
+        return res.status(400).json({error: error.message});
     }
 
+    if (data && data.length > 0) {
+        const isSamePassword = await bcrypt.compare(password, data[0].password);
+        if (!isSamePassword) {
+            return res.status(400).json({error: 'Invalid credentials'});
+        }
+    }
+
+    req.session.userId = data[0].id;
+    console.log(req.session);
+    return res.status(200).json({message: 'User logged in'});
 });
 
 

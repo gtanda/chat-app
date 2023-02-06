@@ -1,4 +1,3 @@
-require('dotenv').config();
 const {createClient} = require("@supabase/supabase-js");
 
 const PORT = process.env.PORT;
