@@ -5,10 +5,9 @@ const PORT = require('./utils/config').PORT;
 const server = http.createServer(app);
 
 
+const wss = new WebSocket.Server({server});
 
-const wss = new WebSocket.Server({ server });
-
-wss.on('connection', function connection(ws) {
+wss.on('connection', (ws) => {
     console.log('new client connected');
     ws.send('Welcome Message');
 
@@ -16,7 +15,6 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function message(data) {
         console.log('received: %s', data);
     });
-
 });
 
 

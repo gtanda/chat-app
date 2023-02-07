@@ -4,7 +4,7 @@ import {Input, InputGroup, InputRightElement, Button} from "@chakra-ui/react";
 const HomePage = () => {
     const socket = new WebSocket('ws://localhost:3001');
     const renderCounter = useRef(0);
-    const [message, setMessage] = useState('');
+    const messageRef = useRef('' || null);
     renderCounter.current++;
     socket.onopen = (() => {
         console.log('connecting to server');
@@ -12,10 +12,10 @@ const HomePage = () => {
 
     const handleClick = (e) => {
         e.preventDefault();
-        if (message) {
-            socket.send(message);
+        if (messageRef.current.value) {
+            socket.send(messageRef.current.value);
         }
-        setMessage('');
+        document.getElementById('messageInput').value = '';
     }
 
     return (
@@ -26,14 +26,17 @@ const HomePage = () => {
                     pr='4.5rem'
                     type={'text'}
                     placeholder='Enter Message'
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    ref={messageRef}
+                    id={'messageInput'}
                 />
                 <InputRightElement width='4.5rem'>
                     <Button h='1.75rem' size='sm' onClick={handleClick}>
                         Send
                     </Button>
                 </InputRightElement>
+                <div id={"messageOutput"}>
+
+                </div>
             </InputGroup>
         </div>
     )
