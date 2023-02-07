@@ -10,10 +10,10 @@ import {
     InputRightElement
 } from "@chakra-ui/react";
 import {useDispatch} from "react-redux";
-import {changeView} from "../features/indexView/indexView";
+import {changeView} from "../../features/indexView/indexView";
 import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import authService from "../services/auth";
+import authService from "../../services/auth";
 
 const Login = () => {
     const [username, setUsername] = useState("");

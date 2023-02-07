@@ -1,16 +1,18 @@
 import {useRef, useState} from "react";
 import {Input, InputGroup, InputRightElement, Button} from "@chakra-ui/react";
+const {io} = require('socket.io-client');
 
 const HomePage = () => {
-    const socket = new WebSocket('ws://localhost:3001');
+    const socket = io();
     const renderCounter = useRef(0);
     const messageRef = useRef('' || null);
     renderCounter.current++;
-    socket.onopen = (() => {
-        console.log('connecting to server');
-    });
 
-    const handleClick = (e) => {
+    socket.on('connect', () => {
+        console.log('connected to server');
+        console.log(socket.id);
+    });
+    const sendMessage = (e) => {
         e.preventDefault();
         if (messageRef.current.value) {
             socket.send(messageRef.current.value);
@@ -30,7 +32,7 @@ const HomePage = () => {
                     id={'messageInput'}
                 />
                 <InputRightElement width='4.5rem'>
-                    <Button h='1.75rem' size='sm' onClick={handleClick}>
+                    <Button h='1.75rem' size='sm' onClick={sendMessage}>
                         Send
                     </Button>
                 </InputRightElement>

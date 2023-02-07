@@ -1,19 +1,23 @@
 const app = require('./app');
 const http = require('http');
-const {WebSocket} = require("ws");
 const PORT = require('./utils/config').PORT;
 const server = http.createServer(app);
+const {Server} = require('socket.io');
 
+const io = new Server(server);
 
-const wss = new WebSocket.Server({server});
-
-wss.on('connection', (ws) => {
+io.on('connection', (socket) => {
     console.log('new client connected');
-    ws.send('Welcome Message');
+    socket.send('Welcome Message');
 
-    ws.on('error', console.error);
-    ws.on('message', function message(data) {
-        console.log('received: %s', data);
+    socket.on('error', console.error);
+    socket.on('message', function message(data) {
+        console.log(`Message from client ${socket.id}: ${data}`);
+    });
+
+    socket.on('disconnect', () => {
+        socket.disconnect();
+        console.log(`Client ${socket.id} disconnected`);
     });
 });
 

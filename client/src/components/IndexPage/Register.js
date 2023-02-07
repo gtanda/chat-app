@@ -3,10 +3,10 @@ import {
     InputGroup
 } from "@chakra-ui/react";
 import {useDispatch} from "react-redux";
-import {changeView} from "../features/indexView/indexView";
+import {changeView} from "../../features/indexView/indexView";
 import {useRef, useState} from "react";
-import authService from "../services/auth";
-import auth from "../services/auth";
+import authService from "../../services/auth";
+import auth from "../../services/auth";
 
 const Register = () => {
     const [username, setUsername] = useState("");

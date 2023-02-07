@@ -16,7 +16,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "ws": "^8.12.0"
+    "socket.io": "^4.6.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
