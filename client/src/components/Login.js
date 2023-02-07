@@ -1,14 +1,26 @@
-import {Button, Flex, FormControl, FormLabel, Heading, Input, Text, FormErrorMessage} from "@chakra-ui/react";
+import {
+    Button,
+    Flex,
+    FormControl,
+    Heading,
+    Input,
+    Text,
+    FormErrorMessage,
+    InputGroup,
+    InputRightElement
+} from "@chakra-ui/react";
 import {useDispatch} from "react-redux";
 import {changeView} from "../features/indexView/indexView";
 import {useRef, useState} from "react";
-import {redirect, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import authService from "../services/auth";
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [isError, setIsError] = useState(false);    const dispatch = useDispatch();
+    const [show, setShow] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const timerId = useRef(null);
 
@@ -35,10 +47,16 @@ const Login = () => {
             <Flex direction="column" shadow={"0 0 0.5em hsl(220deg 40% 40%)"} p={12} rounded={6}>
                 <Heading mb={6}>Login</Heading>
                 <FormControl isInvalid={isError}>
-                    <Input placeholder={"Username"} variant={"filled"} mb={3} type={"input"}
+                    <Input placeholder={"Enter Username"} variant={"filled"} mb={3} type={"input"}
                            onChange={(e) => setUsername(e.target.value.trim())}/>
-                    <Input placeholder={"Password"} variant={"filled"} mb={6} type={"password"}
-                           onChange={(e) => setPassword(e.target.value.trim())}/>
+                    <InputGroup size="md">
+                        <Input placeholder={"Enter Password"} variant={"filled"} pr={"4.5rem"} mb={6}
+                               type={show ? "text" : "password"}
+                               onChange={(e) => setPassword(e.target.value.trim())}/>
+                        <InputRightElement>
+                            <Button h="1.75rem" pr={"1.5rem"} pl={"1.5rem"} mr={"1.5rem"} size="md" onClick={() => setShow(!show)}>Show </Button>
+                        </InputRightElement>
+                    </InputGroup>
                     <Button onClick={handleLogin} colorScheme={"teal"} mb={3}>Login</Button>
                     <Text _hover={{cursor: "pointer"}} onClick={() => dispatch(changeView())} color={"blue.500"}>Not a
                         User? <strong>Register</strong></Text>
