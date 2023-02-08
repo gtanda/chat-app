@@ -4,18 +4,13 @@ const formSchema = yup.object({
   password: yup.string().required().min(6).max(28),
 });
 
-const validateForm = (req, res) => {
+const validateForm = (req) => {
   const formData = req.body;
-  return formSchema
-    .validate(formData)
-    .catch((err) => {
-      let error = new Error("ValidationError");
-      error.error = err.errors[0];
-      throw error;
-    })
-    .then((valid) => {
-      console.log("vaid", valid);
-    });
+  return formSchema.validate(formData).catch((err) => {
+    let error = new Error("ValidationError");
+    error.error = err.errors[0];
+    throw error;
+  });
 };
 
 module.exports = validateForm;

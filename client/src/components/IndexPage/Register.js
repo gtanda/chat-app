@@ -1,111 +1,54 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  Heading,
-  Input,
-  InputRightElement,
-  Text,
-  InputGroup,
-} from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
-import { changeView } from '../../reducers/indexPage';
-import { useRef, useState } from 'react';
-import authService from '../../services/auth';
-import auth from '../../services/auth';
+import { useDispatch, useSelector } from "react-redux";
+import { setErrorMessage } from "../../reducers/indexPage";
+import { useRef } from "react";
+import authService from "../../services/auth";
+import IndexForm from "./IndexForm";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Login from "./Login";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const dispatch = useDispatch();
-  const timerId = useRef(null);
+    const dispatch = useDispatch();
+    const indexPageState = useSelector(state => state.index);
+    const timerId = useRef(null);
+    const navigate = useNavigate();
+    const handleRegister = async () => {
+        const username = indexPageState.username.replace(/\s/g, ""); // remove whitespace
+        const password = indexPageState.password.replace(/\s/g, ""); // remove whitespace
 
-  const handleRegister = async e => {
-    e.preventDefault();
-    const userCheck = username.replace(/\s/g, ''); // remove whitespace
-    if (
-      !userCheck ||
-      !password ||
-      !userCheck.match(/^[a-zA-Z0-9]+$/) ||
-      !password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)
-    ) {
-      setIsError(true);
-      clearTimeout(timerId.current);
-      timerId.current = setTimeout(() => {
-        setIsError(false);
-      }, 8000);
-      return;
-    }
+        if (!username || !password) {
+            dispatch(setErrorMessage("Username and Password Required"));
+            setTimeout(() => {
+                dispatch(setErrorMessage(null));
+            }, 5000);
+            return;
+        }
 
-    const registeredUser = await authService.register({ username, password });
-    console.log(registeredUser);
-  };
+        await authService
+            .register({ username, password })
+            .then(response => {
+                if (response.statusText === "ok") {
+                    toast.success("Registration successful");
+                    navigate("/login", { replace: true });
+                }
+            })
+            .catch(error => {
+                dispatch(setErrorMessage(error.response.data.error));
+                clearTimeout(timerId.current);
+                timerId.current = setTimeout(() => {
+                    dispatch(setErrorMessage(null));
+                }, 5000);
+            });
+    };
 
-  return (
-    <Flex height="100vh" alignItems="center" justifyContent="center">
-      <Flex
-        direction="column"
-        shadow={'0 0 0.5em hsl(220deg 40% 40%)'}
-        p={12}
-        rounded={6}
-      >
-        <Heading mb={6}>Register</Heading>
-        <FormControl isInvalid={isError}>
-          <Input
-            placeholder={'Username'}
-            variant={'filled'}
-            mb={3}
-            type={'email'}
-            onChange={e => setUsername(e.target.value.trim())}
-          />
-          <InputGroup size={'md'}>
-            <Input
-              placeholder={'Password'}
-              variant={'filled'}
-              mb={6}
-              type={show ? 'text' : 'password'}
-              onChange={e => setPassword(e.target.value.trim())}
-            />
-            <InputRightElement>
-              <Button
-                h="1.75rem"
-                pr={'1.5rem'}
-                pl={'1.5rem'}
-                mr={'1.5rem'}
-                size="md"
-                onClick={() => setShow(!show)}
-              >
-                Show{' '}
-              </Button>
-            </InputRightElement>
-          </InputGroup>
-          <Button colorScheme={'teal'} mb={3} onClick={handleRegister}>
-            Register
-          </Button>
-          <Text
-            _hover={{ cursor: 'pointer' }}
-            onClick={() => dispatch(changeView())}
-            color={'blue.500'}
-          >
-            Already a user? <strong>Login</strong>
-          </Text>
-          {isError ? (
-            <FormErrorMessage>
-              Valid Username (<strong>Alphanumeric only</strong>) and Password (
-              <strong>
-                Must contain 1 digit, uppercase and lowercase character, and be
-                between 6 to 20 characters
-              </strong>
-              ) required.
-            </FormErrorMessage>
-          ) : null}
-        </FormControl>
-      </Flex>
-    </Flex>
-  );
+    return (
+        <IndexForm
+            submitHandler={handleRegister}
+            buttonName={"Register"}
+            formText={{ p1: "Already a user? ", p2: "Login" }}
+            headingText={"Register"}
+        />
+    );
 };
-
 export default Register;

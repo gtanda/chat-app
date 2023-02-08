@@ -4,7 +4,11 @@ const supabase = require("../utils/config").supabase;
 const validateForm = require("../utils/validateForm");
 
 authRouter.post("/register", async (req, res) => {
-  validateForm(req, res);
+  try {
+    await validateForm(req);
+  } catch (err) {
+    throw err;
+  }
 
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,18 +21,17 @@ authRouter.post("/register", async (req, res) => {
     .from("users")
     .insert({ username, password: hashedPassword })
     .select();
-  console.log("error", error);
+
   if (error) {
     return res.status(400).json({ error: error.message });
   }
-  console.log(data);
 
-  return res.status(200).json({ message: "User created", data: data[2] });
+  return res.status(200).json({ statusText: "ok", data: data[2] });
 });
 
 authRouter.post("/login", async (req, res) => {
   try {
-    await validateForm(req, res);
+    await validateForm(req);
   } catch (err) {
     throw err;
   }
