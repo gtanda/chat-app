@@ -45,7 +45,7 @@ authRouter.post('/login', async (req, res) => {
 
     req.session.userId = data[0].id;
     console.log(req.session);
-    return res.status(200).json({message: 'User logged in'});
+    return res.status(200).json({message: 'Authenticated'});
 });
 
 

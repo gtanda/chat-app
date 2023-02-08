@@ -1,7 +1,7 @@
 import {configureStore} from "@reduxjs/toolkit";
-import indexView from "./features/indexView/indexView";
+import indexPageReducer from "./reducers/indexPage";
 export default configureStore({
     reducer: {
-        index: indexView
-    }
+        index: indexPageReducer
+    },
 });
