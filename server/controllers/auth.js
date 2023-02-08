@@ -1,13 +1,12 @@
 const authRouter = require("express").Router();
 const bcrypt = require("bcrypt");
 const supabase = require("../utils/config").supabase;
+const validateForm = require("../utils/validateForm");
 
 authRouter.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res.status(400).json({ error: "Missing fields" });
-  }
+  validateForm(req, res);
 
+  const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const userExists = await supabase.from("users").select().match({ username });
   if (userExists.data && userExists.data.length > 0) {
@@ -28,12 +27,13 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "Missing fields" });
+  try {
+    await validateForm(req, res);
+  } catch (err) {
+    throw err;
   }
 
+  const { username, password } = req.body;
   const { data, error } = await supabase
     .from("users")
     .select()
@@ -49,6 +49,7 @@ authRouter.post("/login", async (req, res) => {
     }
   }
 
+  console.log(data);
   req.session.userId = data[0].id;
   console.log(req.session);
   return res.status(200).json({ statusText: "ok" });
