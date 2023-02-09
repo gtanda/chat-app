@@ -1,7 +1,7 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import React, { useEffect } from "react";
 import IndexPage from "./IndexPage/IndexPage";
-import HomePage from "./HomePage";
+import HomePage from "./HomePage/HomePage";
 import PrivateRoutes from "./PrivateRoutes";
 import authService from "../services/auth";
 import { setLoggedIn, setUser } from "../reducers/indexPage";

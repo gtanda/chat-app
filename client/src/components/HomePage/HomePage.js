@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
 
 const { io } = require("socket.io-client");
