@@ -5,13 +5,11 @@ import HomePage from "./HomePage";
 import PrivateRoutes from "./PrivateRoutes";
 import authService from "../services/auth";
 import { setLoggedIn, setUser } from "../reducers/indexPage";
-import { useDispatch, useSelector } from "react-redux";
-import { Flex, Spinner, Stack, Text } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
 
 const Views = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userLoggedIn = useSelector(state => state.index.loggedIn);
     useEffect(() => {
         authService
             .loginCheck()
@@ -23,7 +21,7 @@ const Views = () => {
                 }
             })
             .catch(err => {
-                console.error(err);
+                console.error(err.response);
                 dispatch(setLoggedIn(false));
                 navigate("/");
             });

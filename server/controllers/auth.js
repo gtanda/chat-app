@@ -2,8 +2,8 @@ const authRouter = require("express").Router();
 const bcrypt = require("bcrypt");
 const supabase = require("../utils/config").supabase;
 const validateForm = require("../utils/validateForm");
-
-authRouter.post("/register", async (req, res) => {
+const rateLimit = require("../utils/rateLimiter");
+authRouter.post("/register", rateLimit(60, 3), async (req, res) => {
   try {
     await validateForm(req);
   } catch (err) {
@@ -38,15 +38,13 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter
   .get("/login", (req, res) => {
-    console.log("req.session", req.session);
-    console.log("login route");
     if (req.session.user) {
       return res.json({ loggedIn: true, user: req.session.user });
     } else {
       return res.json({ loggedIn: false });
     }
   })
-  .post("/login", async (req, res) => {
+  .post("/login", rateLimit(60, 5), async (req, res) => {
     try {
       await validateForm(req);
     } catch (err) {
@@ -72,7 +70,6 @@ authRouter
     }
 
     req.session.user = { username, userId: data[0].id };
-    console.log(req.session);
     return res
       .status(200)
       .json({ loggedIn: true, statusText: "ok", user: req.session.user });
