@@ -26,7 +26,6 @@ const Login = () => {
         await authService
             .login({ username, password })
             .then(response => {
-                console.log("hit");
                 if (response.statusText === "ok" && response.loggedIn) {
                     dispatch(setUser(response.user));
                     dispatch(setLoggedIn(true));
