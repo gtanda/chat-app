@@ -12,10 +12,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const sessionConfig = session({
-  saveUninitialized: true,
+  saveUninitialized: false,
   secret: process.env.SESSION_SECRET,
   resave: false,
-  maxAge: 1000 * 60 * 60,
+  cookie: {
+    secure: process.env.ENVIRONMENT === "production",
+    httpOnly: true,
+    sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
+    maxAge: 1000 * 60 * 60,
+  },
 });
 
 app.use(sessionConfig);

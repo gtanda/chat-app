@@ -14,7 +14,9 @@ authRouter.post("/register", async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const userExists = await supabase.from("users").select().match({ username });
   if (userExists.data && userExists.data.length > 0) {
-    return res.status(400).json({ error: "Username already registered" });
+    return res
+      .status(400)
+      .json({ loggedIn: false, error: "Username already registered" });
   }
 
   const { data, error } = await supabase
@@ -23,10 +25,15 @@ authRouter.post("/register", async (req, res) => {
     .select();
 
   if (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ loggedIn: false, error: error.message });
   }
 
-  return res.status(200).json({ statusText: "ok", data: data[2] });
+  req.session.user = { username, userId: data[0].id };
+  return res.status(200).json({
+    loggedIn: true,
+    statusText: "ok",
+    user: req.session.user,
+  });
 });
 
 authRouter.post("/login", async (req, res) => {
@@ -42,20 +49,23 @@ authRouter.post("/login", async (req, res) => {
     .select()
     .match({ username });
   if (error) {
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ loggedIn: false, error: error.message });
   }
 
   if (data && data.length > 0) {
     const isSamePassword = await bcrypt.compare(password, data[0].password);
     if (!isSamePassword) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res
+        .status(400)
+        .json({ loggedIn: false, error: "Invalid credentials" });
     }
   }
 
-  console.log(data);
-  req.session.userId = data[0].id;
+  req.session.user = { username, userId: data[0].id };
   console.log(req.session);
-  return res.status(200).json({ statusText: "ok" });
+  return res
+    .status(200)
+    .json({ loggedIn: true, statusText: "ok", user: req.session.user });
 });
 
 module.exports = authRouter;

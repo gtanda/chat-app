@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { setErrorMessage } from "../../reducers/indexPage";
+import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexPage";
 import authService from "../../services/auth";
 import IndexForm from "./IndexForm";
 
@@ -27,7 +27,9 @@ const Login = () => {
             .login({ username, password })
             .then(response => {
                 console.log("hit");
-                if (response.statusText === "ok") {
+                if (response.statusText === "ok" && response.loggedIn) {
+                    dispatch(setUser(response.user));
+                    dispatch(setLoggedIn(true));
                     navigate("/home", { replace: true });
                 }
             })

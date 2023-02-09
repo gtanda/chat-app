@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setErrorMessage } from "../../reducers/indexPage";
+import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexPage";
 import { useRef } from "react";
 import authService from "../../services/auth";
 import IndexForm from "./IndexForm";
@@ -28,9 +28,12 @@ const Register = () => {
         await authService
             .register({ username, password })
             .then(response => {
-                if (response.statusText === "ok") {
+                console.log("response", response);
+                if (response.statusText === "ok" && response.loggedIn) {
+                    dispatch(setUser(response.user));
+                    dispatch(setLoggedIn(true));
                     toast.success("Registration successful");
-                    navigate("/login", { replace: true });
+                    navigate("/home", { replace: true });
                 }
             })
             .catch(error => {
