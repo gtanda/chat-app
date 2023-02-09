@@ -8,7 +8,7 @@ export const indexPage = createSlice({
         password: "",
         show: false,
         errorMessage: null,
-        loggedIn: false,
+        loggedIn: null,
         user: {},
     },
     reducers: {

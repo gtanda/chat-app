@@ -41,9 +41,9 @@ authRouter
     console.log("req.session", req.session);
     console.log("login route");
     if (req.session.user) {
-      return res.status(200).json({ loggedIn: true, user: req.session.user });
+      return res.json({ loggedIn: true, user: req.session.user });
     } else {
-      return res.status(200).json({ loggedIn: false });
+      return res.json({ loggedIn: false });
     }
   })
   .post("/login", async (req, res) => {
