@@ -1,5 +1,7 @@
 import { useRef } from "react";
-import { Input, InputGroup, InputRightElement, Button } from "@chakra-ui/react";
+import { GridItem, Grid, Tabs } from "@chakra-ui/react";
+import SideBar from "./SideBar";
+import Chat from "./Chat";
 
 const { io } = require("socket.io-client");
 
@@ -22,18 +24,14 @@ const HomePage = () => {
     };
 
     return (
-        <div>
-            <h1>Home Page {renderCounter.current}</h1>
-            <InputGroup size="md">
-                <Input pr="4.5rem" type={"text"} placeholder="Enter Message" ref={messageRef} id={"messageInput"} />
-                <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={sendMessage}>
-                        Send
-                    </Button>
-                </InputRightElement>
-                <div id={"messageOutput"}></div>
-            </InputGroup>
-        </div>
+        <Grid templateColumns={"repeat(5, 1fr)"} h={"100vh"} as={Tabs}>
+            <GridItem colSpan={1} borderRight={"0.1rem solid gray"}>
+                <SideBar />
+            </GridItem>
+            <GridItem colSpan={4}>
+                <Chat />
+            </GridItem>
+        </Grid>
     );
 };
 

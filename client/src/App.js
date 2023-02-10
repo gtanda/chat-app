@@ -9,7 +9,7 @@ function App() {
     return (
         <ChakraProvider theme={theme}>
             <BrowserRouter>
-                <ColorModeSwitcher />
+                {/*<ColorModeSwitcher />*/}
                 <ToastContainer autoClose={5000} />
                 <Views />
             </BrowserRouter>
