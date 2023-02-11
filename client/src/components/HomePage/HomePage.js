@@ -1,27 +1,24 @@
-import { useRef } from "react";
+import { useEffect } from "react";
 import { GridItem, Grid, Tabs } from "@chakra-ui/react";
 import SideBar from "./SideBar";
 import Chat from "./Chat";
-
-const { io } = require("socket.io-client");
+import socket from "../../socketClient";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../reducers/indexReducer";
 
 const HomePage = () => {
-    const socket = io();
-    const renderCounter = useRef(0);
-    const messageRef = useRef("" || null);
-    renderCounter.current++;
+    const dispatch = useDispatch();
 
-    socket.on("connect", () => {
-        console.log("connected to server");
-        console.log(socket.id);
-    });
-    const sendMessage = e => {
-        e.preventDefault();
-        if (messageRef.current.value) {
-            socket.send(messageRef.current.value);
-        }
-        document.getElementById("messageInput").value = "";
-    };
+    useEffect(() => {
+        socket.connect();
+        socket.on("connect_error", () => {
+            dispatch(setUser({ loggedIn: false }));
+            console.log("error");
+        });
+        return () => {
+            socket.off("connect_error");
+        };
+    }, [setUser]);
 
     return (
         <Grid templateColumns={"repeat(5, 1fr)"} h={"100vh"} as={Tabs}>

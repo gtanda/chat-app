@@ -1,34 +1,46 @@
 require("dotenv").config();
-const express = require("express");
 require("express-async-errors");
+const http = require("http");
+const PORT = require("./utils/config").PORT;
+const express = require("express");
 const cors = require("cors");
 const app = express();
-const session = require("express-session");
-const RedisStore = require("connect-redis")(session);
 const helmet = require("helmet");
+const { Server } = require("socket.io");
+const {
+  sessionMiddleware,
+  wrap,
+  corsConfig,
+  authorizedUser,
+} = require("./middleware/serverMiddleware");
+app.use(cors(corsConfig));
+const server = http.createServer(app);
 
-app.use(cors({ origin: process.env.CLIENT_ADDRESS, credentials: true }));
-const redisClient = require("./utils/redis");
+const io = new Server(server, { cors: corsConfig });
+
+app.use(sessionMiddleware);
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const sessionConfig = session({
-  saveUninitialized: false,
-  secret: process.env.SESSION_SECRET,
-  store: new RedisStore({ client: redisClient }),
-  resave: false,
-  cookie: {
-    secure: process.env.ENVIRONMENT === "production",
-    httpOnly: true,
-    sameSite: process.env.ENVIRONMENT === "production" ? "none" : "lax",
-    maxAge: 1000 * 60 * 60,
-  },
-});
-
-app.use(sessionConfig);
-
 app.use("/api/auth", require("./controllers/auth"));
+io.use(wrap(sessionMiddleware));
+io.use(authorizedUser);
+io.on("connection", (socket) => {
+  console.log(socket.request?.session.user.username);
+  console.log("new client connected");
+  socket.send("Welcome Message");
+
+  socket.on("error", console.error);
+  socket.on("message", function message(data) {
+    console.log(`Message from client ${socket.id}: ${data}`);
+  });
+
+  socket.on("disconnect", () => {
+    socket.disconnect();
+    console.log(`Client ${socket.id} disconnected`);
+  });
+});
 
 app.use((err, req, res, next) => {
   if (err.message === "ValidationError") {
@@ -37,4 +49,6 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-module.exports = app;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

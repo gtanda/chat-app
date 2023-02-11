@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const supabase = require("../utils/config").supabase;
 const validateForm = require("../utils/validateForm");
 const rateLimit = require("../utils/rateLimiter");
+const { v4: uuidv4 } = require("uuid");
+
 authRouter.post("/register", rateLimit(60, 3), async (req, res) => {
   try {
     await validateForm(req);
@@ -38,7 +40,7 @@ authRouter.post("/register", rateLimit(60, 3), async (req, res) => {
 
 authRouter
   .get("/login", (req, res) => {
-    if (req.session.user) {
+    if (req.session?.user) {
       return res.json({ loggedIn: true, user: req.session.user });
     } else {
       return res.json({ loggedIn: false });
