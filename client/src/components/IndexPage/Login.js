@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexPage";
+import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexReducer";
 import authService from "../../services/auth";
 import IndexForm from "./IndexForm";
+import { validateUsernameAndPassword } from "../../common/utils";
 
 const Login = () => {
     const indexPageState = useSelector(state => state.index);
@@ -12,17 +13,8 @@ const Login = () => {
     const timerId = useRef(null);
 
     const handleLogin = async () => {
-        const username = indexPageState.username.replace(/\s/g, ""); // remove whitespace
-        const password = indexPageState.password.replace(/\s/g, ""); // remove whitespace
-
-        if (!username || !password) {
-            dispatch(setErrorMessage("Username and Password Required"));
-            setTimeout(() => {
-                dispatch(setErrorMessage(null));
-            }, 5000);
-            return;
-        }
-
+        const { username, password } = validateUsernameAndPassword(dispatch, indexPageState, setErrorMessage);
+        console.log(username, password);
         await authService
             .login({ username, password })
             .then(response => {

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexPage";
+import { setErrorMessage, setLoggedIn, setUser } from "../../reducers/indexReducer";
 import { useRef } from "react";
 import authService from "../../services/auth";
 import IndexForm from "./IndexForm";
@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./Login";
 import { useNavigate } from "react-router-dom";
+import { validateUsernameAndPassword } from "../../common/utils";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -14,17 +15,7 @@ const Register = () => {
     const timerId = useRef(null);
     const navigate = useNavigate();
     const handleRegister = async () => {
-        const username = indexPageState.username.replace(/\s/g, ""); // remove whitespace
-        const password = indexPageState.password.replace(/\s/g, ""); // remove whitespace
-
-        if (!username || !password) {
-            dispatch(setErrorMessage("Username and Password Required"));
-            setTimeout(() => {
-                dispatch(setErrorMessage(null));
-            }, 5000);
-            return;
-        }
-
+        const { username, password } = validateUsernameAndPassword(dispatch, indexPageState, setErrorMessage);
         await authService
             .register({ username, password })
             .then(response => {

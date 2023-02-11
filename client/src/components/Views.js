@@ -4,7 +4,7 @@ import IndexPage from "./IndexPage/IndexPage";
 import HomePage from "./HomePage/HomePage";
 import PrivateRoutes from "./PrivateRoutes";
 import authService from "../services/auth";
-import { setLoggedIn, setUser } from "../reducers/indexPage";
+import { setLoggedIn, setUser } from "../reducers/indexReducer";
 import { useDispatch } from "react-redux";
 
 const Views = () => {

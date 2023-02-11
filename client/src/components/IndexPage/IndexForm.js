@@ -1,5 +1,5 @@
 import { Button, Flex, FormControl, Heading, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
-import { changeView, changeUserName, changePassword, setShow } from "../../reducers/indexPage";
+import { changeView, changeUsername, changePassword, setShow } from "../../reducers/indexReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -38,7 +38,7 @@ const IndexForm = ({ submitHandler, buttonName, formText, headingText }) => {
                             variant={"filled"}
                             mb={3}
                             type={"input"}
-                            onChange={e => dispatch(changeUserName(e.target.value.trim()))}
+                            onChange={e => dispatch(changeUsername(e.target.value.trim()))}
                         />
                         {errors ? (
                             <Text color={"red.500"} mb={3}>

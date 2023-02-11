@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const indexPage = createSlice({
+const indexReducer = createSlice({
     name: "index",
     initialState: {
         changePage: true,
@@ -15,7 +15,7 @@ export const indexPage = createSlice({
         changeView: state => {
             state.changePage = !state.changePage;
         },
-        changeUserName: (state, action) => {
+        changeUsername: (state, action) => {
             state.username = action.payload;
         },
         changePassword: (state, action) => {
@@ -36,6 +36,6 @@ export const indexPage = createSlice({
     },
 });
 
-export const { changeView, changeUserName, changePassword, setShow, setErrorMessage, setLoggedIn, setUser } =
-    indexPage.actions;
-export default indexPage.reducer;
+export const { changeView, changeUsername, changePassword, setShow, setErrorMessage, setLoggedIn, setUser } =
+    indexReducer.actions;
+export default indexReducer.reducer;
