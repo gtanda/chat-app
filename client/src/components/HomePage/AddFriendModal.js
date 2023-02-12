@@ -13,13 +13,20 @@ import {
     FormLabel,
 } from "@chakra-ui/react";
 import * as yup from "yup";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { changeUsername } from "../../reducers/indexReducer";
+import { changeUsername, setErrorMessage } from "../../reducers/indexReducer";
+import socket from "../../socketClient";
+import { setFriendList } from "../../reducers/userReducer";
 
 const friendSchema = yup.object({
-    friendUsername: yup.string().required().min(5).max(15),
+    friendUsername: yup
+        .string()
+        .required()
+        .min(5, "Friend name must be 5 characters minimum")
+        .max(15, "Friend name must be 15 characters maximum"),
 });
 
 const AddFriendModal = ({ onClose, isOpen }) => {
@@ -31,18 +38,37 @@ const AddFriendModal = ({ onClose, isOpen }) => {
         resolver: yupResolver(friendSchema),
     });
 
+    const [friendName, setFriendName] = useState("");
+
     const dispatch = useDispatch();
-    const errorMessage = useSelector(state => state.index.errorMessage);
-    const username = useSelector(state => state.index.username);
-    const submitHandler = () => {
-        const friendUsername = username.replace(/\s/g, ""); // remove whitespace
+    const currentFriendList = useSelector(state => state.user.friendList);
+    const closeModal = useCallback(() => {
+        dispatch(setErrorMessage(""));
+        dispatch(changeUsername(""));
+        if (errors && errors?.friendUsername?.message) {
+            errors.friendUsername.message = null;
+            setFriendName("");
+        }
         onClose();
+    });
+
+    const errorMessage = useSelector(state => state.index.errorMessage);
+    const submitHandler = () => {
+        const friendUsername = friendName.replace(/\s/g, ""); // remove whitespace
+        socket.emit("addFriend", friendUsername, ({ error, done }) => {
+            if (done) {
+                dispatch(setFriendList([...currentFriendList, friendUsername]));
+                closeModal();
+                return;
+            }
+            dispatch(setErrorMessage(error));
+        });
     };
 
-    const isError = username.length < 5 || username.length > 15;
+    const isError = friendName.length < 5 || friendName.length > 15;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+        <Modal isOpen={isOpen} onClose={closeModal} isCentered={true}>
             <ModalOverlay />
             <ModalContent>
                 <ModalHeader>Add Friend</ModalHeader>
@@ -57,7 +83,8 @@ const AddFriendModal = ({ onClose, isOpen }) => {
                             <Input
                                 {...register("friendUsername")}
                                 autoComplete={"off"}
-                                onChange={e => dispatch(changeUsername(e.target.value.trim()))}
+                                onChange={e => setFriendName(e.target.value)}
+                                value={friendName}
                                 placeholder={"Enter friend's username"}
                                 type={"text"}
                             />

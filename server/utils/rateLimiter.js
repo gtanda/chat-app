@@ -9,7 +9,10 @@ const rateLimiter = (secondsLimit, rateLimit) => async (req, res, next) => {
   if (response[0][1] > rateLimit) {
     return res
       .status(429)
-      .json({ loggedIn: false, error: "Too many requests" });
+      .json({
+        loggedIn: false,
+        error: `Too many requests, try again in ${secondsLimit} seconds`,
+      });
   }
   next();
 };

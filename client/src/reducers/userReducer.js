@@ -3,10 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const userReducer = createSlice({
     name: "user",
     initialState: {
-        friendList: [
-            { username: "Test User", connected: false },
-            { username: "Test User 2", connected: true },
-        ],
+        friendList: [],
     },
     reducers: {
         setFriendList: (state, action) => {

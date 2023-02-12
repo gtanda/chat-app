@@ -5,7 +5,7 @@ const validateForm = require("../utils/validateForm");
 const rateLimit = require("../utils/rateLimiter");
 const { v4: uuidv4 } = require("uuid");
 
-authRouter.post("/register", rateLimit(60, 3), async (req, res) => {
+authRouter.post("/register", rateLimit(60, 5), async (req, res) => {
   try {
     await validateForm(req);
   } catch (err) {
@@ -23,14 +23,14 @@ authRouter.post("/register", rateLimit(60, 3), async (req, res) => {
 
   const { data, error } = await supabase
     .from("users")
-    .insert({ username, password: hashedPassword })
+    .insert({ username, password: hashedPassword, userId: uuidv4() })
     .select();
 
   if (error) {
     return res.status(400).json({ loggedIn: false, error: error.message });
   }
 
-  req.session.user = { username, userId: data[0].id };
+  req.session.user = { username, id: data[0].id, userId: data[0].userId };
   return res.status(200).json({
     loggedIn: true,
     statusText: "ok",
@@ -71,7 +71,7 @@ authRouter
       }
     }
 
-    req.session.user = { username, userId: data[0].id };
+    req.session.user = { username, id: data[0].id, userId: data[0].userId };
     return res
       .status(200)
       .json({ loggedIn: true, statusText: "ok", user: req.session.user });

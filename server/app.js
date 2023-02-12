@@ -7,6 +7,7 @@ const cors = require("cors");
 const app = express();
 const helmet = require("helmet");
 const { Server } = require("socket.io");
+const { addFriend, initializeUser } = require("./controllers/user");
 const {
   sessionMiddleware,
   wrap,
@@ -27,13 +28,15 @@ app.use("/api/auth", require("./controllers/auth"));
 io.use(wrap(sessionMiddleware));
 io.use(authorizedUser);
 io.on("connection", (socket) => {
-  console.log(socket.request?.session.user.username);
-  console.log("new client connected");
-  socket.send("Welcome Message");
+  initializeUser(socket);
+  console.log(`UserID: ${socket?.user?.userId}`);
 
-  socket.on("error", console.error);
   socket.on("message", function message(data) {
     console.log(`Message from client ${socket.id}: ${data}`);
+  });
+
+  socket.on("addFriend", (friendName, cb) => {
+    addFriend(socket, friendName, cb);
   });
 
   socket.on("disconnect", () => {

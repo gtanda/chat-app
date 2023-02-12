@@ -24,8 +24,15 @@ const wrap = (expressMiddleware) => (socket, next) =>
 const authorizedUser = (socket, next) => {
   if (!socket.request.session || !socket.request.session.user) {
     return next(new Error("Unauthorized"));
+  } else {
+    socket.user = { ...socket.request.session.user };
+    redisClient.hset(
+      `userId:${socket.user.username}`,
+      "userId",
+      socket.user.userId
+    );
+    next();
   }
-  next();
 };
 
 module.exports = { sessionMiddleware, corsConfig, wrap, authorizedUser };

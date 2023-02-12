@@ -5,15 +5,19 @@ import Chat from "./Chat";
 import socket from "../../socketClient";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
+import { setFriendList } from "../../reducers/userReducer";
 
 const HomePage = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
         socket.connect();
+        socket.on("friends", friends => {
+            console.log(friends, "friends");
+            dispatch(setFriendList(friends));
+        });
         socket.on("connect_error", () => {
             dispatch(setUser({ loggedIn: false }));
-            console.log("error");
         });
         return () => {
             socket.off("connect_error");
