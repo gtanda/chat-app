@@ -5,7 +5,7 @@ import Friend from "./Friend";
 const FriendList = () => {
     const friendList = useSelector(state => state.user.friendList);
     const renderFriendList = () => {
-        return friendList.map(friend => <Friend key={friend.username} friend={friend} />);
+        return friendList.map(friend => <Friend key={friend} friend={friend} />);
     };
     console.log("friendlist", friendList);
     return (

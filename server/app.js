@@ -7,7 +7,11 @@ const cors = require("cors");
 const app = express();
 const helmet = require("helmet");
 const { Server } = require("socket.io");
-const { addFriend, initializeUser } = require("./controllers/user");
+const {
+  addFriend,
+  initializeUser,
+  onDisconnect,
+} = require("./controllers/user");
 const {
   sessionMiddleware,
   wrap,
@@ -38,6 +42,8 @@ io.on("connection", (socket) => {
   socket.on("addFriend", (friendName, cb) => {
     addFriend(socket, friendName, cb);
   });
+
+  socket.on("disconnecting", () => onDisconnect(socket));
 
   socket.on("disconnect", () => {
     socket.disconnect();
