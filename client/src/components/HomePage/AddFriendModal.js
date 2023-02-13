@@ -55,9 +55,9 @@ const AddFriendModal = ({ onClose, isOpen }) => {
     const errorMessage = useSelector(state => state.index.errorMessage);
     const submitHandler = () => {
         const friendUsername = friendName.replace(/\s/g, ""); // remove whitespace
-        socket.emit("addFriend", friendUsername, ({ error, done }) => {
+        socket.emit("addFriend", friendUsername, ({ error, done, newFriend }) => {
             if (done) {
-                dispatch(setFriendList([...currentFriendList, friendUsername]));
+                dispatch(setFriendList([newFriend, ...currentFriendList]));
                 closeModal();
                 return;
             }

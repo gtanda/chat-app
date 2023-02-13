@@ -7,11 +7,9 @@ const cors = require("cors");
 const app = express();
 const helmet = require("helmet");
 const { Server } = require("socket.io");
-const {
-  addFriend,
-  initializeUser,
-  onDisconnect,
-} = require("./controllers/user");
+const { addFriend } = require("./controllers/socketio/addFriend");
+const { initializeUser } = require("./controllers/socketio/initializeUser");
+const { onDisconnect } = require("./controllers/socketio/onDisconnect");
 const {
   sessionMiddleware,
   wrap,
@@ -34,21 +32,8 @@ io.use(authorizedUser);
 io.on("connection", (socket) => {
   initializeUser(socket);
   console.log(`UserID: ${socket?.user?.userId}`);
-
-  socket.on("message", function message(data) {
-    console.log(`Message from client ${socket.id}: ${data}`);
-  });
-
-  socket.on("addFriend", (friendName, cb) => {
-    addFriend(socket, friendName, cb);
-  });
-
+  socket.on("addFriend", (friendName, cb) => addFriend(socket, friendName, cb));
   socket.on("disconnecting", () => onDisconnect(socket));
-
-  socket.on("disconnect", () => {
-    socket.disconnect();
-    console.log(`Client ${socket.id} disconnected`);
-  });
 });
 
 app.use((err, req, res, next) => {
