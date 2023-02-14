@@ -3,6 +3,7 @@ const parseFriendList = require("./parseFriendsList");
 const initializeUser = async (socket) => {
   socket.user = { ...socket.request.session.user };
   socket.join(socket.user.userId);
+  console.log("in initializeUser", socket.request.session.user);
   await redisClient.hset(
     `userId:${socket.user.username}`,
     "userId",
@@ -18,10 +19,11 @@ const initializeUser = async (socket) => {
 
   const parsedFriendList = await parseFriendList(friendList);
   const friendRooms = parsedFriendList.map((f) => f.userId);
+  console.log("friendRooms", friendRooms);
   if (friendRooms.length > 0) {
     socket.to(friendRooms).emit("connected", true, socket.user.username);
   }
-  console.log("friendList: ", friendList);
+
   socket.emit("friends", parsedFriendList);
 };
 

@@ -34,6 +34,7 @@ const IndexForm = ({ submitHandler, buttonName, formText, headingText }) => {
                         <Input
                             {...register("username")}
                             isRequired
+                            id={"username"}
                             placeholder={"Enter Username"}
                             variant={"filled"}
                             mb={3}
@@ -49,6 +50,7 @@ const IndexForm = ({ submitHandler, buttonName, formText, headingText }) => {
                             <Input
                                 {...register("password")}
                                 isRequired
+                                id={"password"}
                                 placeholder={"Enter Password"}
                                 variant={"filled"}
                                 pr={"4.5rem"}

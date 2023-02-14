@@ -4,6 +4,7 @@ const addFriend = async (socket, friendName, cb) => {
     return cb({ error: "You cannot add yourself", done: false });
   }
   const friend = await redisClient.hgetall(`userId:${friendName}`);
+  console.log("friend: ", friend);
   if (!friend) {
     return cb({ error: "User not found", done: false });
   }
@@ -20,8 +21,9 @@ const addFriend = async (socket, friendName, cb) => {
 
   await redisClient.lpush(
     `friends:${socket.user.username}`,
-    [friendName, friend.userId].join("")
+    [friendName, friend.userId].join(".")
   );
+
   const newFriend = {
     username: friendName,
     userId: friend.userId,

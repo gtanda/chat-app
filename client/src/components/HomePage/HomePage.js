@@ -6,6 +6,7 @@ import socket from "../../socketClient";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
 import { setFriendList } from "../../reducers/userReducer";
+import friendList from "./FriendList";
 
 const HomePage = () => {
     const dispatch = useDispatch();
@@ -13,22 +14,23 @@ const HomePage = () => {
     useEffect(() => {
         socket.connect();
         socket.on("friends", friends => dispatch(setFriendList(friends)));
-        socket.on("connect_error", () => dispatch(setUser({ loggedIn: false })));
         socket.on("connected", (status, username) => {
-            console.log("in connect");
             const newFriends = currentFriends.map(friend => {
-                console.log("friend", friend);
-                console.log("username", username);
+                const f = { ...friend };
                 if (friend.username === username) {
-                    console.log("in here");
-                    friend.connected = status;
+                    f.connected = status;
                 }
-                return friend;
+                return f;
             });
             dispatch(setFriendList(newFriends));
         });
-        return () => socket.off("connect_error");
-    }, [setUser, setFriendList]);
+        socket.on("connect_error", () => dispatch(setUser({ loggedIn: false })));
+        return () => {
+            socket.off("connect_error");
+            socket.off("connected");
+            socket.off("friends");
+        };
+    }, [friendList, dispatch, currentFriends]);
 
     return (
         <Grid templateColumns={"repeat(5, 1fr)"} h={"100vh"} as={Tabs}>

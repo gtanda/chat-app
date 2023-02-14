@@ -30,10 +30,11 @@ app.use("/api/auth", require("./controllers/auth"));
 io.use(wrap(sessionMiddleware));
 io.use(authorizedUser);
 io.on("connection", (socket) => {
-  initializeUser(socket);
-  console.log(`UserID: ${socket?.user?.userId}`);
+  initializeUser(socket)
+    .then(() => console.log(`User ${socket.user.username} connected`))
+    .catch((err) => console.log(err));
   socket.on("addFriend", (friendName, cb) => addFriend(socket, friendName, cb));
-  socket.on("disconnecting", () => onDisconnect(socket));
+  socket.on("disconnect", () => onDisconnect(socket));
 });
 
 app.use((err, req, res, next) => {

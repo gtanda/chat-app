@@ -7,6 +7,7 @@ export const userReducer = createSlice({
     },
     reducers: {
         setFriendList: (state, action) => {
+            if (action.payload.length === 0) return;
             state.friendList = action.payload;
         },
     },
