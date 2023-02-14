@@ -1,12 +1,13 @@
-import { TabPanel, VStack, TabPanels } from "@chakra-ui/react";
+import { TabPanel, VStack, TabPanels, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 
 const Chat = () => {
     const friendList = useSelector(state => state.user.friendList);
+    const messages = useSelector(state => state.user.messages);
     return friendList.length > 0 ? (
-        <VStack>
-            <TabPanels>
-                <TabPanel>F1</TabPanel>
+        <VStack justify={"end"} h={"100%"}>
+            <TabPanels overflowY={"scroll"}>
+                <Text as={TabPanel}>F1</Text>
             </TabPanels>
         </VStack>
     ) : (

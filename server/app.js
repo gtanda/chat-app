@@ -10,6 +10,7 @@ const { Server } = require("socket.io");
 const { addFriend } = require("./controllers/socketio/addFriend");
 const { initializeUser } = require("./controllers/socketio/initializeUser");
 const { onDisconnect } = require("./controllers/socketio/onDisconnect");
+const { onMessage } = require("./controllers/socketio/onMessage");
 const {
   sessionMiddleware,
   wrap,
@@ -33,6 +34,7 @@ io.on("connection", (socket) => {
   initializeUser(socket)
     .then(() => console.log(`User ${socket.user.username} connected`))
     .catch((err) => console.log(err));
+  socket.on("message", (message) => onMessage(socket, message));
   socket.on("addFriend", (friendName, cb) => addFriend(socket, friendName, cb));
   socket.on("disconnect", () => onDisconnect(socket));
 });

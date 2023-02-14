@@ -1,4 +1,4 @@
-import { Button, Heading, HStack, Input, useDisclosure } from "@chakra-ui/react";
+import { Button, Heading, HStack, useDisclosure } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import AddFriendModal from "./AddFriendModal";
 

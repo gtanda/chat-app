@@ -17,9 +17,9 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { changeUsername, setErrorMessage } from "../../reducers/indexReducer";
-import socket from "../../socketClient";
-import { setFriendList } from "../../reducers/userReducer";
+import { changeUsername, setErrorMessage } from "../../../reducers/indexReducer";
+import socket from "../../../socketClient";
+import { setFriendList } from "../../../reducers/userReducer";
 
 const friendSchema = yup.object({
     friendUsername: yup

@@ -5,8 +5,8 @@ import Chat from "./Chat";
 import socket from "../../socketClient";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
-import { setFriendList } from "../../reducers/userReducer";
-import friendList from "./FriendList";
+import { setFriendList, setMessages } from "../../reducers/userReducer";
+import friendList from "./Friend/FriendList";
 
 const HomePage = () => {
     const dispatch = useDispatch();
@@ -14,6 +14,7 @@ const HomePage = () => {
     useEffect(() => {
         socket.connect();
         socket.on("friends", friends => dispatch(setFriendList(friends)));
+        socket.on("messages", messages => dispatch(setMessages(messages)));
         socket.on("connected", (status, username) => {
             const newFriends = currentFriends.map(friend => {
                 const f = { ...friend };
@@ -29,8 +30,9 @@ const HomePage = () => {
             socket.off("connect_error");
             socket.off("connected");
             socket.off("friends");
+            socket.off("messages");
         };
-    }, [friendList, dispatch, currentFriends]);
+    }, [friendList, dispatch, currentFriends, setMessages]);
 
     return (
         <Grid templateColumns={"repeat(5, 1fr)"} h={"100vh"} as={Tabs}>
