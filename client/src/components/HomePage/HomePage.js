@@ -46,8 +46,8 @@ const HomePage = () => {
             <GridItem colSpan={1} borderRight={"0.1rem solid gray"}>
                 <SideBar />
             </GridItem>
-            <GridItem colSpan={4}>
-                <Chat />
+            <GridItem colSpan={4} maxH={"100vh"}>
+                <Chat overflowY={"scroll"} />
             </GridItem>
         </Grid>
     );

@@ -1,26 +1,44 @@
 import { TabPanel, VStack, TabPanels, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import MessageBox from "./MessageBox";
+import { useEffect, useRef } from "react";
 
 const Chat = () => {
     const friendList = useSelector(state => state.user.friendList);
     const messages = useSelector(state => state.user.messages);
-    const currentFriendIdx = useSelector(state => state.user.currentFriendIdx);
+    const scroll = useRef(null);
+
+    useEffect(() => scroll.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+
     const renderChat = () => {
         return friendList.map(friend => {
             return (
-                <VStack flexDir={"column-reverse"} as={TabPanel} key={`chat:${friend.username}`} w-={"100%"}>
+                <VStack as={TabPanel} flexDir={"column"} key={`chat:${friend.username}`} w={"100%"}>
+                    <div ref={scroll} style={{ height: "0.5rem" }} id={"scrollDiv"}></div>
                     {messages
                         .filter(msg => msg.to === friend.username || msg.from === friend.username)
                         .map((message, idx) => {
                             return (
-                                <Text key={`msg:${friend.username}.${idx}`} fontSize="lg">
-                                    {message.content}
+                                <Text
+                                    m={
+                                        message.to === friend.userId
+                                            ? "1rem 0 0 auto !important"
+                                            : "1rem auto 0 0 !important"
+                                    }
+                                    autoComplete={"off"}
+                                    maxW={"50%"}
+                                    key={`msg:${friend.username}.${idx}`}
+                                    fontSize="lg"
+                                    color={"black"}
+                                    bg={message.to === friend.userId ? "blue.100" : "green.100"}
+                                    borderRadius={"0.35rem"}
+                                    p={"0.25rem"}
+                                >
+                                    From: {message.from} {message.content}
                                 </Text>
                             );
                         })}
                     }
-                    <MessageBox />
                 </VStack>
             );
         });
@@ -28,6 +46,7 @@ const Chat = () => {
     return friendList.length > 0 ? (
         <VStack justify={"end"} h={"100%"}>
             <TabPanels overflowY={"scroll"}>{renderChat()}</TabPanels>
+            <MessageBox />
         </VStack>
     ) : (
         <VStack justify={"center"} w={"100%"} textAlign={"center"} mt={"8rem"} fontSize={"2rem"}>

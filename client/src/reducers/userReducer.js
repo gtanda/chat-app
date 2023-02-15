@@ -14,7 +14,7 @@ export const userReducer = createSlice({
         },
         setMessages: (state, action) => {
             if (action.payload.length === 0) return;
-            state.messages = action.payload;
+            state.messages.push(action.payload);
         },
         setCurrentFriendIdx: (state, action) => {
             state.currentFriendIdx = action.payload;
