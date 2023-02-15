@@ -1,10 +1,12 @@
-import { StackDivider, VStack } from "@chakra-ui/react";
+import { StackDivider, TabPanels, Tabs, VStack } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import Friend from "./Friend";
-import { useEffect } from "react";
+import { useState } from "react";
 
 const FriendList = () => {
+    const [friendIdx, setFriendIdx] = useState(0);
     const friendList = useSelector(state => state.user.friendList);
+    console.log(friendIdx);
 
     const renderFriendList = () => {
         if (friendList.length === 0) return null;
@@ -12,8 +14,10 @@ const FriendList = () => {
     };
 
     return (
-        <VStack w={"100%"} align={"start"} divider={<StackDivider borderColor={"gray"} />} spacing={2}>
-            {renderFriendList()}
+        <VStack w={"100%"} divider={<StackDivider borderColor={"gray"} />} spacing={2}>
+            <TabPanels>
+                <Tabs onChange={idx => setFriendIdx(idx)}>{renderFriendList()}</Tabs>
+            </TabPanels>
         </VStack>
     );
 };

@@ -1,5 +1,6 @@
 import { Circle, Button, HStack, Text, VStack, Flex } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { FiPower } from "react-icons/all";
 
 const UserBar = () => {
     const user = useSelector(state => state.index.user);
@@ -10,8 +11,9 @@ const UserBar = () => {
                     <Circle bg={"green.500"} w={"1rem"} h={"1rem"} />
                     <Text>{user.username}</Text>
                 </HStack>
-                <Button bg={"teal"} size={"sm"} m={"1rem"}>
-                    Logout
+                <Button bg={"teal"} size={"sm"} m={"1rem"} justify={"space-between"}>
+                    <FiPower />
+                    <Text ml={"0.25rem"}>Logout</Text>
                 </Button>
             </Flex>
         </VStack>

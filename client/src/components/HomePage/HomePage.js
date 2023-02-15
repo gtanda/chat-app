@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { GridItem, Grid, Tabs } from "@chakra-ui/react";
 import SideBar from "./SideBar";
-import Chat from "./Chat";
+import Chat from "./Chat/Chat";
 import socket from "../../socketClient";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
