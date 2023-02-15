@@ -14,7 +14,6 @@ const Login = () => {
 
     const handleLogin = async () => {
         const { username, password } = validateUsernameAndPassword(dispatch, indexPageState, setErrorMessage);
-        console.log(username, password);
         await authService
             .login({ username, password })
             .then(response => {

@@ -5,6 +5,7 @@ import MessageBox from "./MessageBox";
 const Chat = () => {
     const friendList = useSelector(state => state.user.friendList);
     const messages = useSelector(state => state.user.messages);
+    const currentFriendIdx = useSelector(state => state.user.currentFriendIdx);
     const renderChat = () => {
         return friendList.map(friend => {
             return (

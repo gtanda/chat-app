@@ -5,6 +5,7 @@ export const userReducer = createSlice({
     initialState: {
         friendList: [],
         messages: [],
+        currentFriendIdx: 0,
     },
     reducers: {
         setFriendList: (state, action) => {
@@ -15,8 +16,11 @@ export const userReducer = createSlice({
             if (action.payload.length === 0) return;
             state.messages = action.payload;
         },
+        setCurrentFriendIdx: (state, action) => {
+            state.currentFriendIdx = action.payload;
+        },
     },
 });
 
-export const { setFriendList, setMessages } = userReducer.actions;
+export const { setFriendList, setMessages, setCurrentFriendIdx } = userReducer.actions;
 export default userReducer.reducer;
