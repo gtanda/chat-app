@@ -8,7 +8,7 @@ import socket from "../../../socketClient";
 import { setMessages } from "../../../reducers/userReducer";
 
 const schema = yup.object({
-    message: yup.string().required().max(255),
+    message: yup.string().required().max(500),
 });
 
 const MessageBox = () => {

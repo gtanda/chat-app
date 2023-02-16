@@ -6,15 +6,18 @@ import { useEffect, useRef } from "react";
 const Chat = () => {
     const friendList = useSelector(state => state.user.friendList);
     const messages = useSelector(state => state.user.messages);
-    const scroll = useRef(null);
+    const scroll = useRef();
 
-    useEffect(() => scroll.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
+    useEffect(() => {
+        if (scroll.current) {
+            scroll.current.scrollTop = scroll.current.scrollHeight;
+        }
+    });
 
     const renderChat = () => {
         return friendList.map(friend => {
             return (
-                <VStack as={TabPanel} flexDir={"column"} key={`chat:${friend.username}`} w={"100%"}>
-                    <div ref={scroll} style={{ height: "0.5rem" }} id={"scrollDiv"}></div>
+                <VStack as={TabPanel} key={`chat:${friend.username}`} w={"100%"}>
                     {messages
                         .filter(msg => msg.to === friend.username || msg.from === friend.username)
                         .map((message, idx) => {
@@ -45,7 +48,9 @@ const Chat = () => {
     };
     return friendList.length > 0 ? (
         <VStack justify={"end"} h={"100%"}>
-            <TabPanels overflowY={"scroll"}>{renderChat()}</TabPanels>
+            <TabPanels overflowY={"scroll"} ref={scroll}>
+                {renderChat()}
+            </TabPanels>
             <MessageBox />
         </VStack>
     ) : (

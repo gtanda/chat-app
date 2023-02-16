@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { GridItem, Grid, Tabs } from "@chakra-ui/react";
 import SideBar from "./SideBar";
 import Chat from "./Chat/Chat";
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
 import { setCurrentFriendIdx, setFriendList, setMessages } from "../../reducers/userReducer";
 import friendList from "./Friend/FriendList";
-import friend from "./Friend/Friend";
 
 const HomePage = () => {
     const dispatch = useDispatch();
