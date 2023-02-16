@@ -1,4 +1,4 @@
-import { Button, FormControl, HStack, Input, Text } from "@chakra-ui/react";
+import { Button, FormControl, HStack, Input } from "@chakra-ui/react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,7 +8,7 @@ import socket from "../../../socketClient";
 import { setMessages } from "../../../reducers/userReducer";
 
 const schema = yup.object({
-    message: yup.string().required().max(500),
+    message: yup.string().required().max(255),
 });
 
 const MessageBox = () => {
@@ -16,14 +16,12 @@ const MessageBox = () => {
         resolver: yupResolver(schema),
     });
     const [textMessage, setTextMessage] = useState("");
-    const msgTo = useSelector(state => state.user.friendList[state.user.currentFriendIdx].username);
-    const msgFrom = useSelector(state => state.index.user.username);
-
+    const msgTo = useSelector(state => state.user.friendList[state.user.currentFriendIdx].userId);
     const dispatch = useDispatch();
 
     const onSubmit = msg => {
-        const message = { from: msgFrom, to: msgTo, content: msg.message };
-        socket.emit("message", message);
+        const message = { from: null, to: msgTo, content: msg.message };
+        socket.emit("messages", message);
         dispatch(setMessages(message));
         setTextMessage("");
     };

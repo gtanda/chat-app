@@ -23,6 +23,22 @@ const initializeUser = async (socket) => {
   }
 
   socket.emit("friends", parsedFriendList);
+  const messageQuery = await redisClient.lrange(
+    `chat:${socket.user.userId}`,
+    0,
+    -1
+  );
+
+  const userMessages = messageQuery.map((msg) => {
+    const parsedMsg = msg.split(".");
+    return { to: parsedMsg[0], from: parsedMsg[1], content: parsedMsg[2] };
+  });
+
+  console.log("userMessages", userMessages);
+
+  if (userMessages && userMessages.length > 0) {
+    socket.emit("messages", userMessages);
+  }
 };
 
 module.exports = { initializeUser };

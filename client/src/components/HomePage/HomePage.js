@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { GridItem, Grid, Tabs } from "@chakra-ui/react";
 import SideBar from "./SideBar";
 import Chat from "./Chat/Chat";
@@ -6,16 +6,18 @@ import socket from "../../socketClient";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../reducers/indexReducer";
 import { setCurrentFriendIdx, setFriendList, setMessages } from "../../reducers/userReducer";
-import friendList from "./Friend/FriendList";
 
 const HomePage = () => {
     const dispatch = useDispatch();
     const currentFriends = useSelector(state => state.user.friendList);
-
+    const messages = useSelector(state => state.user.messages);
     useEffect(() => {
         socket.connect();
         socket.on("friends", friends => dispatch(setFriendList(friends)));
-        socket.on("messages", messages => dispatch(setMessages(messages)));
+        socket.on("messages", messages => {
+            console.log("hit");
+            dispatch(setMessages(messages));
+        });
         socket.on("connected", (status, username) => {
             const newFriends = currentFriends.map(friend => {
                 const f = { ...friend };
@@ -33,7 +35,7 @@ const HomePage = () => {
             socket.off("friends");
             socket.off("messages");
         };
-    }, [friendList, dispatch, currentFriends, setMessages]);
+    }, [dispatch, currentFriends, messages]);
 
     return (
         <Grid

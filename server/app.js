@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
   initializeUser(socket)
     .then(() => console.log(`User ${socket.user.username} connected`))
     .catch((err) => console.log(err));
-  socket.on("message", (message) => onMessage(socket, message));
+  socket.on("messages", (message) => onMessage(socket, message));
   socket.on("addFriend", (friendName, cb) => addFriend(socket, friendName, cb));
   socket.on("disconnect", () => onDisconnect(socket));
 });
